@@ -1,3 +1,5 @@
+package com.miet.ipovs.mp45.myalin.lab1;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;

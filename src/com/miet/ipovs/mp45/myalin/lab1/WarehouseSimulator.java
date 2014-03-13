@@ -1,10 +1,11 @@
+package com.miet.ipovs.mp45.myalin.lab1;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by maxim on 3/12/14.

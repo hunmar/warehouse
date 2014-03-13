@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+package com.miet.ipovs.mp45.myalin.lab1;
+
 import java.util.Random;
 
 /**
