@@ -1,3 +1,5 @@
+package com.miet.ipovs.mp45.myalin.lab1;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -77,11 +79,11 @@ public class StuffManager extends Thread{
     public void addWork(Wagon wagon)
     {
         try {
+            System.out.println("В очредь на погрузку добавлен вагон " + wagon.type);
             wagonQueue.get(wagon.type).put(wagon);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("В очредь на погрузку добавлен вагон" + wagon.type);
     }
 
     public void addWork(Truck truck)
@@ -91,7 +93,6 @@ public class StuffManager extends Thread{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("В очредь на разгрузку добавлен грузовик" + truck.type);
     }
 
 
@@ -99,16 +100,16 @@ public class StuffManager extends Thread{
     {
         try {
             Truck currentTruck = truckQueue.get(stuffType).take();
-            System.out.println("Разгрузка");
+            System.out.println("Разгрузка из грузовика " + currentTruck.type);
             while(!currentTruck.isEmpty())
             {
                 if (!Warehouse.isFullyLoaded(currentTruck.type))
                 {
                     Warehouse.getStorage(currentTruck.type).put(currentTruck.unloadStaff());
-                    System.out.println(currentTruck.type+" "+Warehouse.getStorage(currentTruck.type).size());
                 }
                 Thread.sleep(1);
             }
+            System.out.println("Разгрузка из грузовика " + currentTruck.type + " завершена");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -118,14 +119,14 @@ public class StuffManager extends Thread{
     {
         try {
             Wagon currentWagon = wagonQueue.get(stuffType).take();
-            System.out.println("Погрузка");
+            System.out.println("Погрузка в вагон " + currentWagon.type);
             while(!currentWagon.isLoaded())
             {
                 Stuff stuff = Warehouse.getStorage(currentWagon.type).take();
                 currentWagon.loadStuff();
-                System.out.println(currentWagon.type+" "+Warehouse.getStorage(currentWagon.type).size());
                 Thread.sleep(1);
             }
+            System.out.println("Погрузка в вагон " + currentWagon.type + " завершена");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

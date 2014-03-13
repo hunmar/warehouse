@@ -1,3 +1,5 @@
+package com.miet.ipovs.mp45.myalin.lab1;
+
 /**
  * Created by maxim on 3/12/14.
  */
