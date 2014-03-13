@@ -97,4 +97,29 @@ public class Warehouse {
     public static StuffManager getStuffManager() {
         return stuffManager;
     }
+
+    public static boolean isFullyLoaded(StuffType stuffType)
+    {
+        return storages.get(stuffType).size() >= MAX_FILLING.get(stuffType) ? true : false;
+    }
+
+    public static void addTrain(int wagonsNumber)
+    {
+        final Train train = new Train(wagonsNumber);
+        try {
+            trainQueue.put(train);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addTruck()
+    {
+        final Truck truck = new Truck(StuffType.random());
+        try {
+            truckQueue.put(truck);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

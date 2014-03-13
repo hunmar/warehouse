@@ -10,4 +10,14 @@ public class Wagon {
     public Wagon(StuffType random) {
         this.type=random;
     }
+
+    public void loadStuff()
+    {
+        currentLoad++;
+    }
+
+    public boolean isLoaded()
+    {
+        return currentLoad >= MAX_FILLING ? true : false;
+    }
 }

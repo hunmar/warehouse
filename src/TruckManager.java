@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -7,16 +8,43 @@ public class TruckManager extends Thread {
     public void run()
     {
         try {
-            for (int i = 0; i < 30; i++) {
-                Thread.sleep(new Random().nextInt(300) + 100);
-                // загружаем новый товар
-                Stuff stuff = new Stuff(i+1);
-                Warehouse.getStorage().put(stuff);
-                System.out.println(String.format("Товар №%d загружен", stuff.getNumber()));
+            while (!isInterrupted()) {
+
+                if (Warehouse.getCurrentTruck() == null || Warehouse.getCurrentTruck().isEmpty())
+                {
+                    if (!Warehouse.getTruckQueue().isEmpty())
+                    {
+                        Warehouse.setReadyToLoadFromTruck(false);
+                        getNextTruck();
+                    }
+                }
+
+                Thread.sleep(new Random().nextInt(700) + 200);
             }
         } catch (InterruptedException e) {
 
         }
-        System.out.println("Загрузка товаров окончена");
+        System.out.println("Разгрузка товаров окончена");
+    }
+
+    private void getNextTruck()
+    {
+        if (Warehouse.getCurrentTruck() != null)
+        {
+            //TODO: Тут грузовик должен как-то отъехать
+        }
+
+        try {
+            Warehouse.setCurrentTruck(Warehouse.getTruckQueue().take());
+            //TODO: Тут грузовик должен как-то подъехать
+            Warehouse.setReadyToLoadFromTruck(true);
+            placeTruckIntoStuffManagerQueue(Warehouse.getCurrentTruck());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void placeTruckIntoStuffManagerQueue(Truck truck) {
+            Warehouse.getStuffManager().addWork(truck);
     }
 }

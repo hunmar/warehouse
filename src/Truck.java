@@ -12,4 +12,15 @@ public class Truck {
         this.type=random;
     }
 
+    public Stuff unloadStaff()
+    {
+        currentLoad--;
+        return new Stuff();
+    }
+
+    public boolean isEmpty()
+    {
+        return currentLoad == 0 ? true : false;
+    }
+
 }

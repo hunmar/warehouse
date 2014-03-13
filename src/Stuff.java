@@ -2,19 +2,20 @@
  * Created by maxim on 3/12/14.
  */
 public class Stuff {
-    private int number;
+    private static int number = 0;
+    private int weight = 1;
 
-    /**
-     * @param number
-     */
-    public Stuff(int number)
+    public Stuff()
     {
-        super();
-        this.number = number;
+        number++;
     }
 
     public int getNumber()
     {
         return number;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 }

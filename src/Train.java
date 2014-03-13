@@ -17,7 +17,7 @@ public class Train {
     {
         for (Wagon wagon : wagons)
         {
-            if (wagon.currentLoad <= wagon.MAX_FILLING)
+            if (wagon.currentLoad < wagon.MAX_FILLING)
                 return false;
         }
         return true;
