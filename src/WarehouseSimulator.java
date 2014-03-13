@@ -1,11 +1,15 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by maxim on 3/12/14.
  */
 public class WarehouseSimulator extends JFrame implements ActionListener {
+    public static WarehouseSimulator instance;
     private JProgressBar progressBarWET;
     private JProgressBar progressBarDRY;
     private JProgressBar progressBarPERISH;
@@ -14,6 +18,10 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
     private JButton truckWETButton;
     private JButton truckDRYButton;
     private JButton truckPERISHButton;
+    private JProgressBar progressBarWETTruck;
+    private JProgressBar progressBarDRYTruck;
+    private JProgressBar progressBarPERISHTruck;
+    private Map<StuffType, JProgressBar> progressBars = new HashMap<StuffType, JProgressBar>();
 
     public static void main(String[] args) {
         System.out.println("Fuck you");
@@ -21,6 +29,8 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
     }
 
     WarehouseSimulator() {
+        instance = this;
+
         trainButton.addActionListener(this);
         truckWETButton.addActionListener(this);
         truckDRYButton.addActionListener(this);
@@ -34,6 +44,10 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setVisible(true);
+
+        progressBars.put(StuffType.DRY, progressBarDRYTruck);
+        progressBars.put(StuffType.WET, progressBarWETTruck);
+        progressBars.put(StuffType.PERISH, progressBarPERISHTruck);
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -70,10 +84,40 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
         }
     }
 
-    public void updateCounts()
-    {
-        progressBarWET.setValue((int)(Warehouse.getStorage(StuffType.WET).size()/3500.0*100.0));
-        progressBarDRY.setValue((int)(Warehouse.getStorage(StuffType.DRY).size()/3500.0*100.0));
-        progressBarPERISH.setValue((int)(Warehouse.getStorage(StuffType.PERISH).size()/3500.0*100.0));
+    public void updateCounts() {
+        progressBarWET.setValue((int) (Warehouse.getStorage(StuffType.WET).size() / 3500.0 * 100.0));
+        progressBarDRY.setValue((int) (Warehouse.getStorage(StuffType.DRY).size() / 3500.0 * 100.0));
+        progressBarPERISH.setValue((int) (Warehouse.getStorage(StuffType.PERISH).size() / 3500.0 * 100.0));
+
+        Truck currentTruck = Warehouse.getCurrentTruck();
+        if (currentTruck != null) {
+            progressBars.get(currentTruck.type).setValue((int) (currentTruck.currentLoad / 500.0 * 100.0));
+        }
+    }
+
+    public Thread arriveTruckTask(final Truck truck) {
+        return new Thread() {
+            public void run() {
+                progressBars.get(truck.type).setVisible(true);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    public Thread depatureTruckTask(final Truck truck) {
+        return new Thread() {
+            public void run() {
+                progressBars.get(truck.type).setVisible(false);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 }

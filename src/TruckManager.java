@@ -5,17 +5,26 @@ import java.util.Random;
  * Created by maxim on 3/13/14.
  */
 public class TruckManager extends Thread {
-    public void run()
-    {
+    public void run() {
         try {
             while (!isInterrupted()) {
 
-                if (Warehouse.getCurrentTruck() == null || Warehouse.getCurrentTruck().isEmpty())
-                {
-                    if (!Warehouse.getTruckQueue().isEmpty())
-                    {
+                if (Warehouse.getCurrentTruck() == null || Warehouse.getCurrentTruck().isEmpty()) {
+                    if (!Warehouse.getTruckQueue().isEmpty()) {
                         Warehouse.setReadyToLoadFromTruck(false);
                         getNextTruck();
+                    } else {
+                        if (Warehouse.getCurrentTruck() != null) {
+                            //TODO: Тут грузовик должен как-то отъехать
+                            Truck currentTruck = Warehouse.getCurrentTruck();
+                            Thread t = WarehouseSimulator.instance.depatureTruckTask(currentTruck);
+                            t.start();
+                            try {
+                                t.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
 
@@ -27,16 +36,30 @@ public class TruckManager extends Thread {
         System.out.println("Разгрузка товаров окончена");
     }
 
-    private void getNextTruck()
-    {
-        if (Warehouse.getCurrentTruck() != null)
-        {
+    private void getNextTruck() {
+        if (Warehouse.getCurrentTruck() != null) {
             //TODO: Тут грузовик должен как-то отъехать
+            Truck currentTruck = Warehouse.getCurrentTruck();
+            Thread t = WarehouseSimulator.instance.depatureTruckTask(currentTruck);
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
-            Warehouse.setCurrentTruck(Warehouse.getTruckQueue().take());
             //TODO: Тут грузовик должен как-то подъехать
+            Truck currentTruck = Warehouse.getTruckQueue().take();
+            Warehouse.setCurrentTruck(currentTruck);
+            Thread t = WarehouseSimulator.instance.arriveTruckTask(currentTruck);
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Warehouse.setReadyToLoadFromTruck(true);
             placeTruckIntoStuffManagerQueue(Warehouse.getCurrentTruck());
         } catch (InterruptedException e) {
@@ -45,6 +68,6 @@ public class TruckManager extends Thread {
     }
 
     private void placeTruckIntoStuffManagerQueue(Truck truck) {
-            Warehouse.getStuffManager().addWork(truck);
+        Warehouse.getStuffManager().addWork(truck);
     }
 }
