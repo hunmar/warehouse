@@ -12,6 +12,10 @@ public class TrainManager extends Thread {
 
                 if (Warehouse.getCurrentTrain() == null || Warehouse.getCurrentTrain().isFullyLoaded())
                 {
+                    if (Warehouse.getCurrentTrain() != null)
+                    {
+                        System.out.println("Погрузка в поезд завершена");
+                    }
                     Warehouse.setReadyToUnloadToTrain(false);
                     getNextTrain();
                 }
@@ -21,7 +25,7 @@ public class TrainManager extends Thread {
         } catch (InterruptedException e) {
 
         }
-        System.out.println("Разгрузка товаров окончена");
+
     }
 
     private void getNextTrain()

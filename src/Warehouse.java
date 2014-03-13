@@ -49,8 +49,7 @@ public class Warehouse {
         return instance;
     }
 
-    public static ArrayBlockingQueue<Stuff> getStorage(StuffType stuffType)
-    {
+    public static ArrayBlockingQueue<Stuff> getStorage(StuffType stuffType) {
         return storages.get(stuffType);
     }
 
@@ -98,28 +97,34 @@ public class Warehouse {
         return stuffManager;
     }
 
-    public static boolean isFullyLoaded(StuffType stuffType)
-    {
+    public static boolean isFullyLoaded(StuffType stuffType) {
         return storages.get(stuffType).size() >= MAX_FILLING.get(stuffType) ? true : false;
     }
 
-    public static void addTrain(int wagonsNumber)
-    {
-        final Train train = new Train(wagonsNumber);
-        try {
-            trainQueue.put(train);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public static void addTrain(int wagonsNumber) {
+        if (trainQueue.size() < MAX_TRAINS) {
+            final Train train = new Train(wagonsNumber);
+            try {
+                trainQueue.put(train);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Депо не резиновое!");
         }
     }
 
-    public static void addTruck()
-    {
-        final Truck truck = new Truck(StuffType.random());
-        try {
-            truckQueue.put(truck);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public static void addTruck(StuffType stuffType) {
+        if (truckQueue.size() < MAX_TRUCKS) {
+            final Truck truck = new Truck(stuffType);
+            try {
+                System.out.println("В очредь на разгрузку добавлен грузовик " + truck.type);
+                truckQueue.put(truck);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("На парковке нет места");
         }
     }
 }

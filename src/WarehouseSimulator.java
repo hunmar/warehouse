@@ -6,12 +6,14 @@ import java.awt.event.ActionListener;
  * Created by maxim on 3/12/14.
  */
 public class WarehouseSimulator extends JFrame implements ActionListener {
-    private JProgressBar progressBar1;
-    private JProgressBar progressBar2;
-    private JProgressBar progressBar3;
+    private JProgressBar progressBarWET;
+    private JProgressBar progressBarDRY;
+    private JProgressBar progressBarPERISH;
     private JPanel panel1;
     private JButton trainButton;
-    private JButton truckButton;
+    private JButton truckWETButton;
+    private JButton truckDRYButton;
+    private JButton truckPERISHButton;
 
     public static void main(String[] args) {
         System.out.println("Fuck you");
@@ -20,7 +22,9 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
 
     WarehouseSimulator() {
         trainButton.addActionListener(this);
-        truckButton.addActionListener(this);
+        truckWETButton.addActionListener(this);
+        truckDRYButton.addActionListener(this);
+        truckPERISHButton.addActionListener(this);
 
         Warehouse.getInstance();
 
@@ -55,15 +59,21 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
         if (src == trainButton) {
             Warehouse.addTrain(4);
         }
-        if (src == truckButton) {
-            Warehouse.addTruck();
+        if (src == truckWETButton) {
+            Warehouse.addTruck(StuffType.WET);
+        }
+        if (src == truckDRYButton) {
+            Warehouse.addTruck(StuffType.DRY);
+        }
+        if (src == truckPERISHButton) {
+            Warehouse.addTruck(StuffType.PERISH);
         }
     }
 
     public void updateCounts()
     {
-        progressBar1.setValue((int)(Warehouse.getStorage(StuffType.DRY).size()/3500.0*100.0));
-        progressBar2.setValue((int)(Warehouse.getStorage(StuffType.WET).size()/3500.0*100.0));
-        progressBar3.setValue((int)(Warehouse.getStorage(StuffType.PERISH).size()/3500.0*100.0));
+        progressBarWET.setValue((int)(Warehouse.getStorage(StuffType.WET).size()/3500.0*100.0));
+        progressBarDRY.setValue((int)(Warehouse.getStorage(StuffType.DRY).size()/3500.0*100.0));
+        progressBarPERISH.setValue((int)(Warehouse.getStorage(StuffType.PERISH).size()/3500.0*100.0));
     }
 }
