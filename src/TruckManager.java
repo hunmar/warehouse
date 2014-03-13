@@ -33,7 +33,6 @@ public class TruckManager extends Thread {
         } catch (InterruptedException e) {
 
         }
-        System.out.println("Разгрузка товаров окончена");
     }
 
     private void getNextTruck() {

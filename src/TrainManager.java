@@ -15,6 +15,16 @@ public class TrainManager extends Thread {
                     if (Warehouse.getCurrentTrain() != null)
                     {
                         System.out.println("Погрузка в поезд завершена");
+                        //TODO: Тут поезд должен как-то отъехать
+                        Train currentTrain = Warehouse.getCurrentTrain();
+                        Warehouse.setCurrentTrain(currentTrain);
+                        Thread t = WarehouseSimulator.instance.depatureTrainTask(currentTrain);
+                        t.start();
+                        try {
+                            t.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     Warehouse.setReadyToUnloadToTrain(false);
                     getNextTrain();
@@ -33,11 +43,28 @@ public class TrainManager extends Thread {
         if (Warehouse.getCurrentTrain() != null)
         {
             //TODO: Тут поезд должен как-то отъехать
+            Train currentTrain = Warehouse.getCurrentTrain();
+            Warehouse.setCurrentTrain(currentTrain);
+            Thread t = WarehouseSimulator.instance.depatureTrainTask(currentTrain);
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
-            Warehouse.setCurrentTrain(Warehouse.getTrainQueue().take());
             //TODO: Тут поезд должен как-то подъехать
+            Train currentTrain = Warehouse.getTrainQueue().take();
+            Warehouse.setCurrentTrain(currentTrain);
+            Thread t = WarehouseSimulator.instance.arriveTrainTask(currentTrain);
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Warehouse.setReadyToUnloadToTrain(true);
             placeWagonsIntoStuffManagerQueue(Warehouse.getCurrentTrain().getWagons());
         } catch (InterruptedException e) {
