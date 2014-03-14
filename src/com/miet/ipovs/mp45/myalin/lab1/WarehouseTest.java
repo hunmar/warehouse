@@ -10,43 +10,43 @@ public class WarehouseTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Warehouse.getInstance();
+        Warehouse.getInstance().getInstance();
     }
 
     @Test
     public void testIsReadyToLoadFromTruck() throws Exception {
-        assertEquals("Изначально нельзя", false, Warehouse.isReadyToLoadFromTruck());
-        Warehouse.setReadyToLoadFromTruck(true);
-        assertEquals("Теперь можно", true, Warehouse.isReadyToLoadFromTruck());
+        assertEquals("Изначально нельзя", false, Warehouse.getInstance().isReadyToLoadFromTruck());
+        Warehouse.getInstance().setReadyToLoadFromTruck(true);
+        assertEquals("Теперь можно", true, Warehouse.getInstance().isReadyToLoadFromTruck());
     }
 
     @Test
     public void testIsReadyToUnloadToTrain() throws Exception {
-        assertEquals("Изначально нельзя", false, Warehouse.isReadyToUnloadToTrain());
-        Warehouse.setReadyToUnloadToTrain(true);
-        assertEquals("Теперь можно", true, Warehouse.isReadyToUnloadToTrain());
+        assertEquals("Изначально нельзя", false, Warehouse.getInstance().isReadyToUnloadToTrain());
+        Warehouse.getInstance().setReadyToUnloadToTrain(true);
+        assertEquals("Теперь можно", true, Warehouse.getInstance().isReadyToUnloadToTrain());
     }
 
     @Test
     public void testIsFullyLoaded() throws Exception {
         StuffType stuffType = StuffType.random();
-        assertEquals("Изначально склад пустой", false, Warehouse.isFullyLoaded(stuffType));
+        assertEquals("Изначально склад пустой", false, Warehouse.getInstance().isFullyLoaded(stuffType));
         for (int i =0; i < 3500; i++)
-            Warehouse.storages.get(stuffType).put(new Stuff());
-        assertEquals("А теперь склад должен быть заполнен", true, Warehouse.isFullyLoaded(stuffType));
+            Warehouse.getInstance().storages.get(stuffType).put(new Stuff());
+        assertEquals("А теперь склад должен быть заполнен", true, Warehouse.getInstance().isFullyLoaded(stuffType));
     }
 
     @Test
     public void testAddTruck() throws Exception {
-        Warehouse.addTruck(StuffType.random());
+        Warehouse.getInstance().addTruck(StuffType.random());
 
-        assertEquals("В очереди должен оказаться один грузовик", 1, Warehouse.getTruckQueue().size());
+        assertEquals("В очереди должен оказаться один грузовик", 1, Warehouse.getInstance().getTruckQueue().size());
     }
 
     @Test
     public void testAddTrain() throws Exception {
-        Warehouse.addTrain(6);
+        Warehouse.getInstance().addTrain(6);
 
-        assertEquals("В очереди должен оказаться один поезд", 1, Warehouse.getTrainQueue().size());
+        assertEquals("В очереди должен оказаться один поезд", 1, Warehouse.getInstance().getTrainQueue().size());
     }
 }

@@ -12,14 +12,14 @@ public class TrainManager extends Thread {
         try {
             while (!isInterrupted()) {
 
-                if (Warehouse.getCurrentTrain() == null || Warehouse.getCurrentTrain().isFullyLoaded())
+                if (Warehouse.getInstance().getCurrentTrain() == null || Warehouse.getInstance().getCurrentTrain().isFullyLoaded())
                 {
-                    if (Warehouse.getCurrentTrain() != null)
+                    if (Warehouse.getInstance().getCurrentTrain() != null)
                     {
                         System.out.println("Погрузка в поезд завершена");
                         //TODO: Тут поезд должен как-то отъехать
-                        Train currentTrain = Warehouse.getCurrentTrain();
-                        Warehouse.setCurrentTrain(currentTrain);
+                        Train currentTrain = Warehouse.getInstance().getCurrentTrain();
+                        Warehouse.getInstance().setCurrentTrain(currentTrain);
                         Thread t = WarehouseSimulator.instance.depatureTrainTask(currentTrain);
                         t.start();
                         try {
@@ -28,7 +28,7 @@ public class TrainManager extends Thread {
                             e.printStackTrace();
                         }
                     }
-                    Warehouse.setReadyToUnloadToTrain(false);
+                    Warehouse.getInstance().setReadyToUnloadToTrain(false);
                     getNextTrain();
                 }
 
@@ -42,11 +42,11 @@ public class TrainManager extends Thread {
 
     private void getNextTrain()
     {
-        if (Warehouse.getCurrentTrain() != null)
+        if (Warehouse.getInstance().getCurrentTrain() != null)
         {
             //TODO: Тут поезд должен как-то отъехать
-            Train currentTrain = Warehouse.getCurrentTrain();
-            Warehouse.setCurrentTrain(currentTrain);
+            Train currentTrain = Warehouse.getInstance().getCurrentTrain();
+            Warehouse.getInstance().setCurrentTrain(currentTrain);
             Thread t = WarehouseSimulator.instance.depatureTrainTask(currentTrain);
             t.start();
             try {
@@ -58,8 +58,8 @@ public class TrainManager extends Thread {
 
         try {
             //TODO: Тут поезд должен как-то подъехать
-            Train currentTrain = Warehouse.getTrainQueue().take();
-            Warehouse.setCurrentTrain(currentTrain);
+            Train currentTrain = Warehouse.getInstance().getTrainQueue().take();
+            Warehouse.getInstance().setCurrentTrain(currentTrain);
             Thread t = WarehouseSimulator.instance.arriveTrainTask(currentTrain);
             t.start();
             try {
@@ -67,8 +67,8 @@ public class TrainManager extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Warehouse.setReadyToUnloadToTrain(true);
-            placeWagonsIntoStuffManagerQueue(Warehouse.getCurrentTrain().getWagons());
+            Warehouse.getInstance().setReadyToUnloadToTrain(true);
+            placeWagonsIntoStuffManagerQueue(Warehouse.getInstance().getCurrentTrain().getWagons());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -77,7 +77,7 @@ public class TrainManager extends Thread {
     private void placeWagonsIntoStuffManagerQueue(ArrayList<Wagon> wagons) {
         for (Wagon wagon : wagons)
         {
-            Warehouse.getStuffManager().addWork(wagon);
+            Warehouse.getInstance().getStuffManager().addWork(wagon);
         }
     }
 

@@ -10,14 +10,14 @@ public class TruckManager extends Thread {
         try {
             while (!isInterrupted()) {
 
-                if (Warehouse.getCurrentTruck() == null || Warehouse.getCurrentTruck().isEmpty()) {
-                    if (!Warehouse.getTruckQueue().isEmpty()) {
-                        Warehouse.setReadyToLoadFromTruck(false);
+                if (Warehouse.getInstance().getCurrentTruck() == null || Warehouse.getInstance().getCurrentTruck().isEmpty()) {
+                    if (!Warehouse.getInstance().getTruckQueue().isEmpty()) {
+                        Warehouse.getInstance().setReadyToLoadFromTruck(false);
                         getNextTruck();
                     } else {
-                        if (Warehouse.getCurrentTruck() != null) {
+                        if (Warehouse.getInstance().getCurrentTruck() != null) {
                             //TODO: Тут грузовик должен как-то отъехать
-                            Truck currentTruck = Warehouse.getCurrentTruck();
+                            Truck currentTruck = Warehouse.getInstance().getCurrentTruck();
                             Thread t = WarehouseSimulator.instance.depatureTruckTask(currentTruck);
                             t.start();
                             try {
@@ -37,9 +37,9 @@ public class TruckManager extends Thread {
     }
 
     private void getNextTruck() {
-        if (Warehouse.getCurrentTruck() != null) {
+        if (Warehouse.getInstance().getCurrentTruck() != null) {
             //TODO: Тут грузовик должен как-то отъехать
-            Truck currentTruck = Warehouse.getCurrentTruck();
+            Truck currentTruck = Warehouse.getInstance().getCurrentTruck();
             Thread t = WarehouseSimulator.instance.depatureTruckTask(currentTruck);
             t.start();
             try {
@@ -51,8 +51,8 @@ public class TruckManager extends Thread {
 
         try {
             //TODO: Тут грузовик должен как-то подъехать
-            Truck currentTruck = Warehouse.getTruckQueue().take();
-            Warehouse.setCurrentTruck(currentTruck);
+            Truck currentTruck = Warehouse.getInstance().getTruckQueue().take();
+            Warehouse.getInstance().setCurrentTruck(currentTruck);
             Thread t = WarehouseSimulator.instance.arriveTruckTask(currentTruck);
             t.start();
             try {
@@ -60,14 +60,14 @@ public class TruckManager extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Warehouse.setReadyToLoadFromTruck(true);
-            placeTruckIntoStuffManagerQueue(Warehouse.getCurrentTruck());
+            Warehouse.getInstance().setReadyToLoadFromTruck(true);
+            placeTruckIntoStuffManagerQueue(Warehouse.getInstance().getCurrentTruck());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     private void placeTruckIntoStuffManagerQueue(Truck truck) {
-        Warehouse.getStuffManager().addWork(truck);
+        Warehouse.getInstance().getStuffManager().addWork(truck);
     }
 }

@@ -35,7 +35,6 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
     private ArrayList<JProgressBar> progressBarWagons = new ArrayList<JProgressBar>();
 
     public static void main(String[] args) {
-        System.out.println("Fuck you");
         WarehouseSimulator whs = new WarehouseSimulator();
     }
 
@@ -47,7 +46,7 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
         truckDRYButton.addActionListener(this);
         truckPERISHButton.addActionListener(this);
 
-        Warehouse.getInstance();
+        Warehouse.getInstance().getInstance();
 
         setContentPane(panel1);
 
@@ -106,34 +105,34 @@ public class WarehouseSimulator extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         Object src = evt.getSource();
         if (src == trainButton) {
-            Warehouse.addTrain(6);
+            Warehouse.getInstance().addTrain(6);
         }
         if (src == truckWETButton) {
-            Warehouse.addTruck(StuffType.WET);
+            Warehouse.getInstance().addTruck(StuffType.WET);
         }
         if (src == truckDRYButton) {
-            Warehouse.addTruck(StuffType.DRY);
+            Warehouse.getInstance().addTruck(StuffType.DRY);
         }
         if (src == truckPERISHButton) {
-            Warehouse.addTruck(StuffType.PERISH);
+            Warehouse.getInstance().addTruck(StuffType.PERISH);
         }
     }
 
     public void updateCounts() {
 
-        trainsLabel.setText("Trains: " + Warehouse.getTrainQueue().size());
-        trucksLabel.setText("Trucks: " + Warehouse.getTruckQueue().size());
+        trainsLabel.setText("Trains: " + Warehouse.getInstance().getTrainQueue().size());
+        trucksLabel.setText("Trucks: " + Warehouse.getInstance().getTruckQueue().size());
 
-        progressBarWET.setValue((int) (Warehouse.getStorage(StuffType.WET).size() / 3500.0 * 100.0));
-        progressBarDRY.setValue((int) (Warehouse.getStorage(StuffType.DRY).size() / 3500.0 * 100.0));
-        progressBarPERISH.setValue((int) (Warehouse.getStorage(StuffType.PERISH).size() / 3500.0 * 100.0));
+        progressBarWET.setValue((int) (Warehouse.getInstance().getStorage(StuffType.WET).size() / 3500.0 * 100.0));
+        progressBarDRY.setValue((int) (Warehouse.getInstance().getStorage(StuffType.DRY).size() / 3500.0 * 100.0));
+        progressBarPERISH.setValue((int) (Warehouse.getInstance().getStorage(StuffType.PERISH).size() / 3500.0 * 100.0));
 
-        Truck currentTruck = Warehouse.getCurrentTruck();
+        Truck currentTruck = Warehouse.getInstance().getCurrentTruck();
         if (currentTruck != null) {
             progressBars.get(currentTruck.type).setValue((int) (currentTruck.currentLoad / 500.0 * 100.0));
         }
 
-        Train currentTrain = Warehouse.getCurrentTrain();
+        Train currentTrain = Warehouse.getInstance().getCurrentTrain();
         if (currentTrain != null)
         {
             ArrayList<Wagon> wagons = currentTrain.getWagons();
