@@ -11,99 +11,101 @@ public class Warehouse {
 
     static Warehouse instance;
 
-    private static final int MAX_TRAINS = 10;
-    private static final int MAX_TRUCKS = 10;
+    private final int MAX_TRAINS = 10;
+    private final int MAX_TRUCKS = 10;
 
-    static Map<StuffType, ArrayBlockingQueue<Stuff>> storages = new HashMap<StuffType, ArrayBlockingQueue<Stuff>>();
-    static Map<StuffType, Integer> MAX_FILLING = new HashMap<StuffType, Integer>();
+    private Map<StuffType, ArrayBlockingQueue<Stuff>> storages = new HashMap<StuffType, ArrayBlockingQueue<Stuff>>();
+    private Map<StuffType, Integer> MAX_FILLING = new HashMap<StuffType, Integer>();
 
     //Stuff section
-    private static StuffManager stuffManager = new StuffManager();
+    private StuffManager stuffManager = new StuffManager();
 
     //Trucks section
-    private static TruckManager truckManager = new TruckManager();
-    static Truck currentTruck = null;
-    static boolean readyToLoadFromTruck = false;
-    static ArrayBlockingQueue<Truck> truckQueue = new ArrayBlockingQueue<Truck>(MAX_TRUCKS);
+    private TruckManager truckManager = new TruckManager();
+    private Truck currentTruck = null;
+    boolean readyToLoadFromTruck = false;
+    ArrayBlockingQueue<Truck> truckQueue = new ArrayBlockingQueue<Truck>(MAX_TRUCKS);
 
     //Trains section
-    private static TrainManager trainManager = new TrainManager();
-    static Train currentTrain = null;
-    static boolean readyToUnloadToTrain = false;
-    static ArrayBlockingQueue<Train> trainQueue = new ArrayBlockingQueue<Train>(MAX_TRAINS);
+    private TrainManager trainManager = new TrainManager();
+    Train currentTrain = null;
+    boolean readyToUnloadToTrain = false;
+    ArrayBlockingQueue<Train> trainQueue = new ArrayBlockingQueue<Train>(MAX_TRAINS);
+
+    private Warehouse()
+    {
+        // Забиваем размеры склада
+        for (StuffType stuffType : StuffType.values()) {
+            MAX_FILLING.put(stuffType, 3500);
+            storages.put(stuffType, new ArrayBlockingQueue<Stuff>(MAX_FILLING.get(stuffType)));
+        }
+
+        // запускаем потоки погрузки и разгрузки
+        truckManager.start();
+        trainManager.start();
+        stuffManager.start();
+    }
 
     public static Warehouse getInstance() {
         if (instance == null) {
             instance = new Warehouse();
-
-            // Забиваем размеры склада
-            for (StuffType stuffType : StuffType.values()) {
-                MAX_FILLING.put(stuffType, 3500);
-                storages.put(stuffType, new ArrayBlockingQueue<Stuff>(MAX_FILLING.get(stuffType)));
-            }
-
-            // запускаем потоки погрузки и разгрузки
-            truckManager.start();
-            trainManager.start();
-            stuffManager.start();
-
         }
         return instance;
     }
 
-    public static ArrayBlockingQueue<Stuff> getStorage(StuffType stuffType) {
+    public ArrayBlockingQueue<Stuff> getStorage(StuffType stuffType) {
         return storages.get(stuffType);
     }
 
-    public static Truck getCurrentTruck() {
+    public Truck getCurrentTruck() {
         return currentTruck;
     }
 
-    public static ArrayBlockingQueue<Truck> getTruckQueue() {
+    public ArrayBlockingQueue<Truck> getTruckQueue() {
         return truckQueue;
     }
 
-    public static Train getCurrentTrain() {
+    public Train getCurrentTrain() {
         return currentTrain;
     }
 
-    public static ArrayBlockingQueue<Train> getTrainQueue() {
+    public ArrayBlockingQueue<Train> getTrainQueue() {
         return trainQueue;
     }
 
-    public static void setCurrentTruck(Truck currentTruck) {
-        Warehouse.currentTruck = currentTruck;
+    public void setCurrentTruck(Truck _currentTruck) {
+        currentTruck = _currentTruck;
     }
 
-    public static void setCurrentTrain(Train currentTrain) {
-        Warehouse.currentTrain = currentTrain;
+    public void setCurrentTrain(Train _currentTrain) {
+        currentTrain = _currentTrain;
     }
 
-    public static boolean isReadyToLoadFromTruck() {
+    public boolean isReadyToLoadFromTruck() {
         return readyToLoadFromTruck;
     }
 
-    public static void setReadyToLoadFromTruck(boolean readyToLoadFromTruck) {
-        Warehouse.readyToLoadFromTruck = readyToLoadFromTruck;
+    public void setReadyToLoadFromTruck(boolean _readyToLoadFromTruck) {
+        readyToLoadFromTruck = _readyToLoadFromTruck;
     }
 
-    public static boolean isReadyToUnloadToTrain() {
+    public boolean isReadyToUnloadToTrain() {
         return readyToUnloadToTrain;
     }
 
-    public static void setReadyToUnloadToTrain(boolean readyToUnloadToTrain) {
-        Warehouse.readyToUnloadToTrain = readyToUnloadToTrain;
+    public void setReadyToUnloadToTrain(boolean _readyToUnloadToTrain) {
+        readyToUnloadToTrain = _readyToUnloadToTrain;
     }
 
-    public static StuffManager getStuffManager() {
+    public StuffManager getStuffManager() {
         return stuffManager;
     }
 
-    public static boolean isFullyLoaded(StuffType stuffType) {
+    public boolean isFullyLoaded(StuffType stuffType) {
         return storages.get(stuffType).size() >= MAX_FILLING.get(stuffType) ? true : false;
     }
 
-    public static void addTrain(int wagonsNumber) {
+    public void addTrain(int wagonsNumber) {
         if (trainQueue.size() < MAX_TRAINS) {
             final Train train = new Train(wagonsNumber);
             try {
@@ -116,7 +118,7 @@ public class Warehouse {
         }
     }
 
-    public static void addTruck(StuffType stuffType) {
+    public void addTruck(StuffType stuffType) {
         if (truckQueue.size() < MAX_TRUCKS) {
             final Truck truck = new Truck(stuffType);
             try {

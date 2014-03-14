@@ -10,8 +10,8 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class StuffManager extends Thread{
 
-    static Map<StuffType, Thread> loadFromTruckThreads = new HashMap<StuffType, Thread>();
-    static Map<StuffType, Thread> unloadToWagonThreads = new HashMap<StuffType, Thread>();
+    static private Map<StuffType, Thread> loadFromTruckThreads = new HashMap<StuffType, Thread>();
+    static private Map<StuffType, Thread> unloadToWagonThreads = new HashMap<StuffType, Thread>();
 
     static Map<StuffType, ArrayBlockingQueue<Wagon>> wagonQueue = new HashMap<StuffType, ArrayBlockingQueue<Wagon>>();
     static Map<StuffType, ArrayBlockingQueue<Truck>> truckQueue = new HashMap<StuffType, ArrayBlockingQueue<Truck>>();
@@ -43,7 +43,7 @@ public class StuffManager extends Thread{
                     }
                 });
                 loadFromTruckThreads.put(stuffType, tl);
-                loadFromTruckThreads.get(stuffType).start();
+                tl.start();
 
                 Thread tu = new Thread(new Runnable() {
                     StuffType _stuffType = st;
@@ -62,9 +62,7 @@ public class StuffManager extends Thread{
                     }
                 });
                 unloadToWagonThreads.put(stuffType, tu);
-                unloadToWagonThreads.get(stuffType).start();
-
-
+                tu.start();
             }
 
             while (!isInterrupted()) {
@@ -103,9 +101,9 @@ public class StuffManager extends Thread{
             System.out.println("Разгрузка из грузовика " + currentTruck.type);
             while(!currentTruck.isEmpty())
             {
-                if (!Warehouse.isFullyLoaded(currentTruck.type))
+                if (!Warehouse.getInstance().isFullyLoaded(currentTruck.type))
                 {
-                    Warehouse.getStorage(currentTruck.type).put(currentTruck.unloadStaff());
+                    Warehouse.getInstance().getStorage(currentTruck.type).put(currentTruck.unloadStaff());
                 }
                 Thread.sleep(1);
             }
@@ -122,7 +120,7 @@ public class StuffManager extends Thread{
             System.out.println("Погрузка в вагон " + currentWagon.type);
             while(!currentWagon.isLoaded())
             {
-                Stuff stuff = Warehouse.getStorage(currentWagon.type).take();
+                Stuff stuff = Warehouse.getInstance().getStorage(currentWagon.type).take();
                 currentWagon.loadStuff();
                 Thread.sleep(1);
             }
